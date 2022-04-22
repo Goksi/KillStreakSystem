@@ -1,0 +1,6 @@
+name: KillStreakSystem
+version: '${project.version}'
+main: tech.goksi.killstreaksystem.Main
+authors: [ Goksi ]
+description: Cool killstreaks plugin with killing rewards and placeholderapi support
+website: https://goksi.tech
