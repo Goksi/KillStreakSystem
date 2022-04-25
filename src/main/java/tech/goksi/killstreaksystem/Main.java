@@ -2,6 +2,7 @@ package tech.goksi.killstreaksystem;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import tech.goksi.killstreaksystem.commands.Killstreaks;
 import tech.goksi.killstreaksystem.listener.Join;
 import tech.goksi.killstreaksystem.sql.ConnectionHandler;
 import tech.goksi.killstreaksystem.sql.Database;
@@ -27,6 +28,7 @@ public final class Main extends JavaPlugin {
         db = new Database();
         db.createTables();
         this.getServer().getPluginManager().registerEvents(new Join(), this);
+        this.getCommand("killstreaks").setExecutor(new Killstreaks());
 
 
 

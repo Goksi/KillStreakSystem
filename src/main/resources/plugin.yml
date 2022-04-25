@@ -4,3 +4,14 @@ main: tech.goksi.killstreaksystem.Main
 authors: [ Goksi ]
 description: Cool killstreaks plugin with killing rewards and placeholderapi support
 website: https://goksi.tech
+commands:
+  killstreaks:
+    aliases: [killstreak]
+    description: Main command for plugin
+permissions:
+  killstreaks.reload:
+    description: Permission to reload configuration
+    default: op
+  killstreaks.set:
+    description: Sets killstreak of another player
+    default: op
