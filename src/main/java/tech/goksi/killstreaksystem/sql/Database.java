@@ -14,7 +14,10 @@ public class Database {
     public void createTables(){
         try{
             PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS killstreaks "
-            + "(UUID BINARY(16), CurrentKS INTEGER DEFAULT 0, BigggestKS INTEGER DEFAULT 0, PRIMARY KEY (UUID))");
+            + "(UUID BINARY(16), CurrentKS INTEGER DEFAULT 0, BiggestKS INTEGER DEFAULT 0, TheLastKS INTEGER DEFAULT 0, PRIMARY KEY (UUID))");
+            ps.executeUpdate();
+            ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS cache "
+             + "(USERNAME VARCHAR(255), UUID BINARY(16), PRIMARY KEY (USERNAME))");
             ps.executeUpdate();
         }catch (SQLException e){
             Main.getInstance().getLogger().severe("Error while creating tables: ");
@@ -27,6 +30,10 @@ public class Database {
             PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection()
                     .prepareStatement("INSERT OR IGNORE INTO killstreaks (UUID) VALUES (?)");
             ps.setBytes(1, covertUUID(p.getUniqueId()));
+            ps.executeUpdate();
+            ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("INSERT OR IGNORE INTO cache (USERNAME, UUID) VALUES (?, ?)");
+            ps.setString(1, p.getName());
+            ps.setBytes(2, covertUUID(p.getUniqueId()));
             ps.executeUpdate();
         }catch (SQLException e){
             Main.getInstance().getLogger().severe("Error while writing player to database: ");
@@ -65,18 +72,40 @@ public class Database {
     public void addKillStreaks(Player killer, Player dead){
         try{
             PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection()
-                    .prepareStatement("UPDATE killstreaks SET CurrentKS=CurrentKS + ? WHERE UUID=?");
-            ps.setInt(1, 1);
-            ps.setBytes(2, covertUUID(killer.getUniqueId()));
+                    .prepareStatement("UPDATE killstreaks SET CurrentKS=CurrentKS + 1 WHERE UUID=?");
+            ps.setBytes(1, covertUUID(killer.getUniqueId()));
+            ps.executeUpdate();
+            ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("UPDATE killstreaks SET TheLastKS=? WHERE UUID=?");
+            ps.setBytes(2, covertUUID(dead.getUniqueId()));
+            ps.setInt(1, getKillStreaks(dead));
             ps.executeUpdate();
             ps = Main.getInstance().getConnectionHandler().getConnection().
-                    prepareStatement("UPDATE killstreaks SET CurrentKS=? WHERE UUID=?");
-            ps.setInt(1, 0);
-            ps.setBytes(2, covertUUID(dead.getUniqueId()));
+                    prepareStatement("UPDATE killstreaks SET CurrentKS=0 WHERE UUID=?");
+            ps.setBytes(1, covertUUID(dead.getUniqueId()));
             ps.executeUpdate();
+            int  ks;
+            if(getBiggestKS(killer) < (ks =getKillStreaks(killer))){
+                ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("UPDATE killstreaks SET BiggestKS=? WHERE UUID=? ");
+                ps.setBytes(2, covertUUID(killer.getUniqueId()));
+                ps.setInt(1, ks);
+                ps.executeUpdate();
+            }
         }catch (SQLException e){
             e.printStackTrace();
         }
+    }
+    public UUID getUUID(String name){
+        try{
+            PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("SELECT UUID FROM cache WHERE LOWER(USERNAME) = LOWER(?)");
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return convertBinary(rs.getBytes("UUID"));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 
