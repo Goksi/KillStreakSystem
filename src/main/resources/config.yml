@@ -1,0 +1,12 @@
+Messages:
+  Killstreaks: "&7----------------------\n
+    &7[&6KillstreakSystem&7]\n
+    &4Stats of player: &7%player\n
+    &4Current KS: &7%currentKs\n
+    &4Biggest KS: &7%biggestKs\n
+    &4Award for killing: &7%award\n
+  &7----------------------"
+  NoPermission: "&7[&6KillstreakSystem&7] &4You don't have permission to execute this command"
+  Reload: "&7[&6KillstreakSystem&7] &4Config is successful reloaded!"
+  NotInDatabase: "&7[&6KillstreakSystem&7] &4Sorry, but player %player is not in our database"
+  SetWrongUsage: "&7[&6KillstreakSystem&7] &4Wrong usage, correct usage is /killstreaks set <player> <killstreak>"
