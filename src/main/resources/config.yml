@@ -1,3 +1,5 @@
+Settings:
+  ResetKSOnMobKill: true
 Messages:
   Killstreaks: "&7----------------------\n
     &7[&6KillstreakSystem&7]\n
@@ -10,3 +12,7 @@ Messages:
   Reload: "&7[&6KillstreakSystem&7] &4Config is successful reloaded!"
   NotInDatabase: "&7[&6KillstreakSystem&7] &4Sorry, but player %player is not in our database"
   SetWrongUsage: "&7[&6KillstreakSystem&7] &4Wrong usage, correct usage is /killstreaks set <player> <killstreak>"
+  SetNotNumber: "&7[&6KillstreakSystem&7] &4 Third arg must be a number"
+  SetSuccess: "&7[&6KillstreakSystem&7] &4You successfully set killstreak of player %player to %killstreak"
+  RestoreKS: "&7[&6KillstreakSystem&7] &4You successfully restored killstreak of player %player "
+  RestoreKSTarget: "&7[&6KillstreakSystem&7] &4Your killstreak is restored by %player "
