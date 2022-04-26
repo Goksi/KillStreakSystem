@@ -14,40 +14,63 @@ public class Killstreaks implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player p = (Player) sender;
         if(args.length > 0){
-            //killstreaks reload
             if(args[0].equalsIgnoreCase("reload")){
                 if(p.hasPermission("killstreaks.reload")){
                     Main.getInstance().reloadConfig();
                     p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.Reload")));
                     return true;
                 }else p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.NoPermission")));
-                //killstreaks set
             }else if (args[0].equalsIgnoreCase("set")){
                 if(p.hasPermission("killstreaks.set")){
                     if(args.length == 3){
-                        // ovde set ks
+                        Player target = Bukkit.getPlayer(Main.getInstance().getDatabase().getUUID(args[1]));
+                        if(target == null){
+                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.NotInDatabase").
+                                    replaceAll("%player", args[0])));
+                        }else {
+                            int killStreak;
+                            try{
+                                killStreak = Integer.parseInt(args[2]);
+                            }catch (NumberFormatException e){
+                                p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.SetNotNumber")));
+                                return true;
+                            }
+                            Main.getInstance().getDatabase().setKillStreak(target, killStreak);
+                            p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.SetSuccess")).
+                                    replaceAll("%killstreak", String.valueOf(killStreak)).replaceAll("%player", target.getName()));
+                        }
+                        return true;
                     }else p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.SetWrongUsage")));
                 }else p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.NoPermission")));
-                //killstreaks <player>
+            }else if(args[0].equalsIgnoreCase("restore")){
+                if(p.hasPermission("killstreaks.restore")){
+                    Player target = Bukkit.getPlayer(Main.getInstance().getDatabase().getUUID(args[1]));
+                    if(target == null){
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.NotInDatabase").
+                                replaceAll("%player", args[0])));
+                    }else {
+                        Main.getInstance().getDatabase().restoreKS(target);
+                        p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.RestoreKS"))
+                                .replaceAll("%player", target.getName()));
+                        target.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.RestoreKSTarget"))
+                                .replaceAll("%player", p.getName()));
+                    }
+                    return true;
+                }else p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.NoPermission")));
             }else {
-                //case sensitive je
                 Player target = Bukkit.getPlayer(Main.getInstance().getDatabase().getUUID(args[0]));
                 if(target == null){
                     p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.NotInDatabase").
                             replaceAll("%player", args[0])));
-                    return true;
                 }else {
                     p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.Killstreaks")
                             .replaceAll("%player", target.getName())
                             .replaceAll("%currentKs", String.valueOf(Main.getInstance().getDatabase().getKillStreaks(target)))
                             .replaceAll("%biggestKs", String.valueOf(Main.getInstance().getDatabase().getBiggestKS(target)))
                             .replaceAll("%award", "toDo")));
-                    return true;
                 }
-
-
+                return true;
             }
-            //bez ikakvih argumenata
         }else {
             p.sendMessage(ChatColor.translateAlternateColorCodes('&', Main.getInstance().getConfig().getString("Messages.Killstreaks")
                     .replaceAll("%player", p.getName())
@@ -57,7 +80,6 @@ public class Killstreaks implements CommandExecutor {
             return true;
 
         }
-
         return false;
     }
 }

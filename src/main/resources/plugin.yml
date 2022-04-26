@@ -15,3 +15,6 @@ permissions:
   killstreaks.set:
     description: Sets killstreak of another player
     default: op
+  killstreaks.restore:
+    description: Restore killstreak of another player
+    default: op
