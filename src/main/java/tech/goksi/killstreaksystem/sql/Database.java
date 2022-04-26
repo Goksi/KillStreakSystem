@@ -107,6 +107,26 @@ public class Database {
         }
         return null;
     }
+    public void setKillStreak(Player target, int killStreaks){
+        try{
+            PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("UPDATE killstreaks SET CurrentKS=? WHERE UUID=?");
+            ps.setInt(1, killStreaks);
+            ps.setBytes(2, covertUUID(target.getUniqueId()));
+            ps.executeUpdate();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void restoreKS(Player target){
+        try{
+            PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("UPDATE killstreaks SET CurrentKS = TheLastKs WHERE UUID=?");
+            ps.setBytes(1, covertUUID(target.getUniqueId()));
+            ps.executeUpdate();
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 
 
     private byte[] covertUUID(UUID uuid){
