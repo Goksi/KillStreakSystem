@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import tech.goksi.killstreaksystem.commands.Killstreaks;
 import tech.goksi.killstreaksystem.listener.Join;
 import tech.goksi.killstreaksystem.listener.PlayerKill;
+import tech.goksi.killstreaksystem.placeholders.PlaceholderAPI;
 import tech.goksi.killstreaksystem.sql.ConnectionHandler;
 import tech.goksi.killstreaksystem.sql.Database;
 
@@ -31,6 +32,7 @@ public final class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new Join(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerKill(), this);
         this.getCommand("killstreaks").setExecutor(new Killstreaks());
+        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new PlaceholderAPI().register();
 
 
 
