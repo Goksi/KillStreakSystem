@@ -6,7 +6,7 @@ description: Cool killstreaks plugin with killing rewards and placeholderapi sup
 website: https://goksi.tech
 commands:
   killstreaks:
-    aliases: [killstreak]
+    aliases: [killstreak, ks]
     description: Main command for plugin
 permissions:
   killstreaks.reload:
