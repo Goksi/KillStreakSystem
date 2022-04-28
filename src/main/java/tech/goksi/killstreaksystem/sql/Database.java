@@ -1,5 +1,6 @@
 package tech.goksi.killstreaksystem.sql;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import tech.goksi.killstreaksystem.Main;
 
@@ -7,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.UUID;
 
 
@@ -69,20 +71,15 @@ public class Database {
         }
         return 0;
     }
+    //dodati da ne moze da umire vise puta od istog igraca
     public void addKillStreaks(Player killer, Player dead){
         try{
             PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection()
-                    .prepareStatement("UPDATE killstreaks SET CurrentKS=CurrentKS + 1 WHERE UUID=?");
-            ps.setBytes(1, covertUUID(killer.getUniqueId()));
+                    .prepareStatement("UPDATE killstreaks SET CurrentKS=? WHERE UUID=?");
+            ps.setBytes(2, covertUUID(killer.getUniqueId()));
+            ps.setInt(1, getKillStreaks(killer) + 1);
             ps.executeUpdate();
-            ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("UPDATE killstreaks SET TheLastKS=? WHERE UUID=?");
-            ps.setBytes(2, covertUUID(dead.getUniqueId()));
-            ps.setInt(1, getKillStreaks(dead));
-            ps.executeUpdate();
-            ps = Main.getInstance().getConnectionHandler().getConnection().
-                    prepareStatement("UPDATE killstreaks SET CurrentKS=0 WHERE UUID=?");
-            ps.setBytes(1, covertUUID(dead.getUniqueId()));
-            ps.executeUpdate();
+            resetKillstreak(dead);
             int  ks;
             if(getBiggestKS(killer) < (ks =getKillStreaks(killer))){
                 ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("UPDATE killstreaks SET BiggestKS=? WHERE UUID=? ");
@@ -126,6 +123,50 @@ public class Database {
         }catch (SQLException e){
             e.printStackTrace();
         }
+    }
+    public void resetKillstreak(Player target){
+        try{
+            PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("UPDATE killstreaks SET TheLastKS=? WHERE UUID=?");
+            ps.setBytes(2, covertUUID(target.getUniqueId()));
+            ps.setInt(1, getKillStreaks(target));
+            ps.executeUpdate();
+            ps = Main.getInstance().getConnectionHandler().getConnection().
+                    prepareStatement("UPDATE killstreaks SET CurrentKS=0 WHERE UUID=?");
+            ps.setBytes(1, covertUUID(target.getUniqueId()));
+            ps.executeUpdate();
+
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public LinkedHashMap<String, Integer> getLeaderBoardsCurrentKS(){
+        LinkedHashMap<String, Integer> temp = new LinkedHashMap<>();
+        try{
+            PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("SELECT UUID,CurrentKS FROM killstreaks ORDER BY CurrentKS DESC LIMIT 10");
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                temp.put(Bukkit.getPlayer(convertBinary(rs.getBytes("UUID"))).getName(), rs.getInt("CurrentKS"));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return temp;
+    }
+
+    public LinkedHashMap<String, Integer> getLeaderBoardsBiggestKS(){
+        LinkedHashMap<String, Integer> temp = new LinkedHashMap<>();
+        try{
+            PreparedStatement ps = Main.getInstance().getConnectionHandler().getConnection().prepareStatement("SELECT UUID, BiggestKS FROM killstreaks ORDER BY BiggestKS DESC LIMIT 10");
+            ResultSet rs = ps.executeQuery();
+            while(rs.next()){
+                temp.put(Bukkit.getPlayer(convertBinary(rs.getBytes("UUID"))).getName(), rs.getInt("BiggestKS"));
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+
+        return temp;
     }
 
 
