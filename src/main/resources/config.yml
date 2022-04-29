@@ -1,5 +1,7 @@
 Settings:
   ResetKSOnMobKill: true
+  PlaceholderRefresh: 35 #in seconds
+  AntiAbuse: 3 #after 3 kills from same person, you will stop receiving kills
 Messages:
   Killstreaks: "&7----------------------\n
     &7[&6KillstreakSystem&7]\n
