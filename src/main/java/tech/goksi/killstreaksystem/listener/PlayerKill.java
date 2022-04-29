@@ -11,13 +11,13 @@ import tech.goksi.killstreaksystem.Main;
 
 public class PlayerKill implements Listener {
     @EventHandler
-    public void onDeath(PlayerDeathEvent e){
+    public void onDeath(PlayerDeathEvent e) {
         Player target = e.getEntity();
-        Entity killer = ((EntityDamageByEntityEvent) target.getLastDamageCause()).getDamager(); 
-        if(killer == null) return;
-        if(killer instanceof Monster && Main.getInstance().getConfig().getBoolean("Settings.ResetKSOnMobKill")){
+        Entity killer = ((EntityDamageByEntityEvent) target.getLastDamageCause()).getDamager();
+        if (killer == null) return;
+        if (killer instanceof Monster && Main.getInstance().getConfig().getBoolean("Settings.ResetKSOnMobKill")) {
             Main.getInstance().getDatabase().resetKillstreak(target);
-        }else if (killer instanceof Player){
+        } else if (killer instanceof Player) {
             Player p = ((Player) killer).getPlayer();
             Main.getInstance().getDatabase().addKillStreaks(p, target);
         }

@@ -7,7 +7,7 @@ import tech.goksi.killstreaksystem.Main;
 
 public class Join implements Listener {
     @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e){
+    public void onPlayerJoin(PlayerJoinEvent e) {
         Main.getInstance().getDatabase().initPlayer(e.getPlayer());
     }
 }
