@@ -10,21 +10,25 @@ import tech.goksi.killstreaksystem.sql.ConnectionHandler;
 import tech.goksi.killstreaksystem.sql.Database;
 
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 
 public final class Main extends JavaPlugin {
     private static Main instance;
     private ConnectionHandler connectionHandler;
     private Database db;
+    private LinkedHashMap<String, Integer> currentKSLeaderboard;
+    private LinkedHashMap<String, Integer> biggestKSLeaderboard;
+
     @Override
     public void onEnable() {
         connectionHandler = new ConnectionHandler();
         instance = this;
         this.saveDefaultConfig();
-        try{
+        try {
             connectionHandler.connect();
             Bukkit.getLogger().info("Successfully connected to SQLite");
-        }catch (SQLException e){
-            Bukkit.getLogger().severe( "Error while reading/writing SQLite database: ");
+        } catch (SQLException e) {
+            Bukkit.getLogger().severe("Error while reading/writing SQLite database: ");
             e.printStackTrace();
         }
         db = new Database();
@@ -32,10 +36,14 @@ public final class Main extends JavaPlugin {
         this.getServer().getPluginManager().registerEvents(new Join(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerKill(), this);
         this.getCommand("killstreaks").setExecutor(new Killstreaks());
-        if(Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new PlaceholderAPI().register();
-
-
-
+        if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null) new PlaceholderAPI().register();
+        currentKSLeaderboard = new LinkedHashMap<>();
+        biggestKSLeaderboard = new LinkedHashMap<>();
+        /*updating leaderboards*/
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            currentKSLeaderboard = getDatabase().getLeaderBoardsCurrentKS();
+            biggestKSLeaderboard = getDatabase().getLeaderBoardsBiggestKS(); //added some delay because of query
+        }, 0, getConfig().getInt("Settings.PlaceholderRefresh") * 20L);
     }
 
     @Override
@@ -45,6 +53,14 @@ public final class Main extends JavaPlugin {
 
     public static Main getInstance() {
         return instance;
+    }
+
+    public LinkedHashMap<String, Integer> getBiggestKSLeaderboard() {
+        return biggestKSLeaderboard;
+    }
+
+    public LinkedHashMap<String, Integer> getCurrentKSLeaderboard() {
+        return currentKSLeaderboard;
     }
 
     public ConnectionHandler getConnectionHandler() {
