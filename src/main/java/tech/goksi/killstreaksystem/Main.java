@@ -1,6 +1,8 @@
 package tech.goksi.killstreaksystem;
 
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 import tech.goksi.killstreaksystem.commands.Killstreaks;
 import tech.goksi.killstreaksystem.listener.Join;
@@ -18,6 +20,7 @@ public final class Main extends JavaPlugin {
     private Database db;
     private LinkedHashMap<String, Integer> currentKSLeaderboard;
     private LinkedHashMap<String, Integer> biggestKSLeaderboard;
+    private Economy economy;
 
     @Override
     public void onEnable() {
@@ -33,6 +36,11 @@ public final class Main extends JavaPlugin {
         }
         db = new Database();
         db.createTables();
+        if(!setupEconomy()){
+            Bukkit.getLogger().severe("Vault no found, disabling plugin..");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
         this.getServer().getPluginManager().registerEvents(new Join(), this);
         this.getServer().getPluginManager().registerEvents(new PlayerKill(), this);
         this.getCommand("killstreaks").setExecutor(new Killstreaks());
@@ -69,5 +77,20 @@ public final class Main extends JavaPlugin {
 
     public Database getDatabase() {
         return db;
+    }
+    private boolean setupEconomy(){
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            return false;
+        }
+        RegisteredServiceProvider<Economy> rsp = getServer().getServicesManager().getRegistration(Economy.class);
+        if (rsp == null) {
+            return false;
+        }
+        economy = rsp.getProvider();
+        return economy != null;
+    }
+
+    public Economy getEconomy() {
+        return economy;
     }
 }
