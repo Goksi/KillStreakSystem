@@ -2,6 +2,9 @@ Settings:
   ResetKSOnMobKill: true
   PlaceholderRefresh: 35 #in seconds
   AntiAbuse: 3 #after 3 kills from same person, you will stop receiving kills
+  MoneyOnKill: 300 #300 on 0 ks 600 on 1, 900 on 2 etc
+  TakeMoneyOnDeath: false
+  TakeMoneyOnDeathAmount: 150
 Messages:
   Killstreaks: "&7----------------------\n
     &7[&6KillstreakSystem&7]\n
@@ -18,3 +21,5 @@ Messages:
   SetSuccess: "&7[&6KillstreakSystem&7] &4You successfully set killstreak of player %player to %killstreak"
   RestoreKS: "&7[&6KillstreakSystem&7] &4You successfully restored killstreak of player %player "
   RestoreKSTarget: "&7[&6KillstreakSystem&7] &4Your killstreak is restored by %player "
+  KillerKill: "&7[&6KillstreakSystem&7] &4you got reward of $%amount for killing %player"
+  DeadKill: "&7[&6KillstreakSystem&7] &4%player just killed you, you lost %amount"
