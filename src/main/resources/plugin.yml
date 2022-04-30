@@ -18,3 +18,5 @@ permissions:
   killstreaks.restore:
     description: Restore killstreak of another player
     default: op
+depend: [Vault]
+softdepend: [PlaceholderAPI]
