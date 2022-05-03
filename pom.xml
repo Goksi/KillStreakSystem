@@ -6,7 +6,7 @@
 
     <groupId>tech.goksi</groupId>
     <artifactId>KillStreakSystem</artifactId>
-    <version>beta</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>KillStreakSystem</name>
